@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D START — Путеводитель в мир аддитивных технологий</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #16161f;
+    --surface: #1c1c28;
+    --surface2: #242434;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --accent: #ff6b35;
+    --accent2: #ff9f6b;
+    --teal: #00d4aa;
+    --blue: #4d9fff;
+    --purple: #a78bfa;
+    --text: #f0efe8;
+    --muted: #888890;
+    --muted2: #b0afc0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* === NOISE TEXTURE OVERLAY === */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* === HERO === */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 80px 6vw;
+    overflow: hidden;
+  }
+
+  .hero-bg-shape {
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(ellipse at center, rgba(255,107,53,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-bg-shape2 {
+    position: absolute;
+    bottom: -200px;
+    left: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(ellipse at center, rgba(0,212,170,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,107,53,0.12);
+    border: 1px solid rgba(255,107,53,0.25);
+    color: var(--accent2);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 28px;
+  }
+
+  .badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+  }
+
+  h1 .line1 { display: block; color: var(--text); }
+  h1 .line2 { display: block; color: var(--accent); }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    color: var(--muted2);
+    max-width: 560px;
+    margin-bottom: 48px;
+    font-weight: 400;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .hero-meta-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero-meta-item .num {
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .hero-meta-item .lbl {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-top: 4px;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    animation: bounce 2s infinite;
+  }
+
+  .scroll-hint svg { opacity: 0.5; }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(6px); }
+  }
+
+  /* === MAIN LAYOUT === */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 6vw 120px;
+  }
+
+  /* === SECTION HEADER === */
+  .section-intro {
+    margin-bottom: 64px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-intro h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .section-intro p {
+    font-size: 1.15rem;
+    color: var(--muted2);
+    max-width: 620px;
+  }
+
+  /* === STEP CARDS === */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+    position: relative;
+  }
+
+  .step:hover {
+    border-color: var(--border2);
+  }
+
+  .step-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 20px;
+    padding: 28px 32px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .step-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    background: rgba(255,107,53,0.1);
+    border: 1px solid rgba(255,107,53,0.2);
+    border-radius: 6px;
+    padding: 4px 10px;
+    white-space: nowrap;
+  }
+
+  .step-title-wrap {}
+
+  .step-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .step-icon {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .step-tagline {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  .step-chevron {
+    color: var(--muted);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+
+  .step.open .step-chevron {
+    transform: rotate(180deg);
+  }
+
+  .step-body {
+    display: none;
+    padding: 0 32px 32px;
+  }
+
+  .step.open .step-body {
+    display: block;
+  }
+
+  .step-divider {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 28px;
+  }
+
+  /* === CONTENT INSIDE STEPS === */
+  .content-block {
+    margin-bottom: 24px;
+  }
+
+  .content-block:last-child { margin-bottom: 0; }
+
+  .content-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .content-text {
+    font-size: 15px;
+    color: var(--muted2);
+    line-height: 1.8;
+  }
+
+  /* === PRINTER CARDS === */
+  .printer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .printer-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .printer-card.featured {
+    border-color: rgba(255,107,53,0.3);
+    background: rgba(255,107,53,0.05);
+  }
+
+  .printer-card .p-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    background: rgba(255,107,53,0.15);
+    color: var(--accent2);
+    border: 1px solid rgba(255,107,53,0.2);
+  }
+
+  .printer-card.alt .p-badge {
+    background: rgba(77,159,255,0.1);
+    color: #7ab8ff;
+    border-color: rgba(77,159,255,0.2);
+  }
+
+  .printer-card .p-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .printer-card .p-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* === TAG LIST === */
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .tag {
+    font-size: 13px;
+    padding: 5px 12px;
+    border-radius: 100px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--muted2);
+  }
+
+  .tag.highlight {
+    background: rgba(0,212,170,0.08);
+    border-color: rgba(0,212,170,0.2);
+    color: #5ee8cc;
+  }
+
+  /* === LINKS === */
+  .link-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .link-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--blue);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 10px 14px;
+    background: rgba(77,159,255,0.05);
+    border: 1px solid rgba(77,159,255,0.12);
+    border-radius: 8px;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .link-item:hover {
+    background: rgba(77,159,255,0.1);
+    border-color: rgba(77,159,255,0.2);
+  }
+
+  .link-item::before {
+    content: '↗';
+    font-size: 12px;
+    opacity: 0.6;
+  }
+
+  /* === STEP LIST === */
+  .step-list {
+    counter-reset: stepcount;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .step-list li {
+    counter-increment: stepcount;
+    display: flex;
+    gap: 14px;
+    font-size: 14px;
+    color: var(--muted2);
+    align-items: flex-start;
+    padding: 12px 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .step-list li::before {
+    content: counter(stepcount);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(255,107,53,0.1);
+    border: 1px solid rgba(255,107,53,0.2);
+    border-radius: 4px;
+    min-width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
+  /* === RESOURCES BLOCK === */
+  .resource-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+  }
+
+  .resource-card {
+    padding: 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .resource-card:hover {
+    border-color: var(--border2);
+    background: var(--surface);
+  }
+
+  .resource-card .r-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .resource-card .r-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .resource-card .r-desc {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* === COMMUNITY === */
+  .community-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+
+  .community-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: border-color 0.2s;
+  }
+
+  .community-card:hover { border-color: var(--border2); }
+
+  .community-card .c-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    background: rgba(167,139,250,0.1);
+    border: 1px solid rgba(167,139,250,0.2);
+  }
+
+  .community-card .c-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .community-card .c-desc {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* === FOOTER === */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 6vw;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+    gap: 16px;
+  }
+
+  footer .f-left {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  footer .f-right {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* === BENCHY CALLOUT === */
+  .benchy-callout {
+    background: rgba(0,212,170,0.06);
+    border: 1px solid rgba(0,212,170,0.15);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-top: 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .benchy-callout .bc-icon {
+    font-size: 28px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .benchy-callout .bc-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #5ee8cc;
+    margin-bottom: 4px;
+  }
+
+  .benchy-callout .bc-text {
+    font-size: 13px;
+    color: var(--muted2);
+    line-height: 1.6;
+  }
+
+  /* === PROGRESS SIDEBAR === */
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    gap: 48px;
+    align-items: flex-start;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 32px;
+  }
+
+  .sidebar-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .sidebar-nav {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .sidebar-nav li a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .sidebar-nav li a:hover {
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .sidebar-nav li a .sn-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--muted);
+  }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .step-header { padding: 20px; }
+    .step-body { padding: 0 20px 20px; }
+  }
+
+  /* === ACCENT LINE ON OPEN STEP === */
+  .step.open {
+    border-color: rgba(255,107,53,0.2);
+  }
+
+  .step.open .step-header {
+    background: rgba(255,107,53,0.03);
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-shape"></div>
+  <div class="hero-bg-shape2"></div>
+
+  <div class="badge">Руководство · Апрель 2026</div>
+
+  <h1>
+    <span class="line1">3D START</span>
+    <span class="line2">Аддитивные<br>технологии</span>
+  </h1>
+
+  <p class="hero-sub">От «что это такое?» до первой детали на столе — полный путеводитель для новичка.</p>
+
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <span class="num">6</span>
+      <span class="lbl">Этапов</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="num">FDM</span>
+      <span class="lbl">Технология</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="num">PLA</span>
+      <span class="lbl">Первый материал</span>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Прокрутите вниз</span>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 9l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main>
+  <div class="section-intro">
+    <h2>Дорожная карта</h2>
+    <p>Прежде чем покупать принтер — разберитесь с основами. Каждый этап кликабелен.</p>
+  </div>
+
+  <div class="layout">
+    <div class="steps" id="stepsContainer">
+
+      <!-- STEP 1 -->
+      <div class="step open" id="step1">
+        <div class="step-header" onclick="toggleStep(this)">
+          <span class="step-num">Этап 01</span>
+          <div class="step-title-wrap">
+            <div class="step-title"><span class="step-icon">📍</span> Понимание основ</div>
+            <div class="step-tagline">Теория. Как принтер плавит пластик.</div>
+          </div>
+          <svg class="step-chevron" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="step-body">
+          <div class="step-divider"></div>
+          <div class="content-block">
+            <div class="content-label">Ключевые технологии</div>
+            <div class="tag-list">
+              <span class="tag highlight">FDM — для новичков ✓</span>
+              <span class="tag">SLA — смола, сложнее</span>
+              <span class="tag">SLS — промышленный</span>
+            </div>
+            <p class="content-text">FDM (Fused Deposition Modeling) — принтер плавит пластиковую нить и укладывает её слой за слоем. SLA использует фотополимерную смолу и УФ-лазер. Для первого принтера выбирайте FDM — проще, дешевле, безопаснее.</p>
+          </div>
+          <div class="content-block">
+            <div class="content-label">Ресурсы</div>
+            <div class="link-list">
+              <a class="link-item" href="https://www.youtube.com/@AlexGyver" target="_blank">Видео: Как работает 3D печать за 5 минут (AlexGyver)</a>
+              <a class="link-item" href="https://3dtoday.ru/wiki" target="_blank">База знаний для новичков на 3DToday</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step" id="step2">
+        <div class="step-header" onclick="toggleStep(this)">
+          <span class="step-num">Этап 02</span>
+          <div class="step-title-wrap">
+            <div class="step-title"><span class="step-icon">🛠</span> Выбор первого принтера</div>
+            <div class="step-tagline">Рынок 2024–2026: из коробки или конструктор?</div>
+          </div>
+          <svg class="step-chevron" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="step-body">
+          <div class="step-divider"></div>
+          <div class="content-block">
+            <div class="content-label">Топ бюджетных моделей (FDM)</div>
+            <div class="printer-grid">
+              <div class="printer-card featured">
+                <div class="p-badge">Рекомендуем</div>
+                <div class="p-name">Bambu Lab A1 Mini</div>
+                <div class="p-desc">«iPhone» в мире принтеров. Печатает сразу из коробки без настроек.</div>
+              </div>
+              <div class="printer-card alt">
+                <div class="p-badge">Классика</div>
+                <div class="p-name">Creality Ender 3 V3 SE/KE</div>
+                <div class="p-desc">Современная классика — отличный баланс цены и качества.</div>
+              </div>
+            </div>
+          </div>
+          <div class="content-block">
+            <div class="content-label">Обзоры</div>
+            <div class="link-list">
+              <a class="link-item" href="https://www.youtube.com/@dmitriy_sorkin" target="_blank">Канал Дмитрия Соркина — лучшие технические разборы на русском</a>
+              <a class="link-item" href="https://3dtoday.ru/blogs/review" target="_blank">Обзор Bambu Lab A1 Mini — почему это лучший выбор сегодня</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step" id="step3">
+        <div class="step-header" onclick="toggleStep(this)">
+          <span class="step-num">Этап 03</span>
+          <div class="step-title-wrap">
+            <div class="step-title"><span class="step-icon">🧵</span> Расходные материалы</div>
+            <div class="step-tagline">Не весь пластик одинаков. Начните с одного вида.</div>
+          </div>
+          <svg class="step-chevron" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="step-body">
+          <div class="step-divider"></div>
+          <div class="content-block">
+            <div class="content-label">Типы филамента</div>
+            <div class="tag-list">
+              <span class="tag highlight">PLA — ваш выбор ✓</span>
+              <span class="tag">PETG — прочнее, для улицы</span>
+              <span class="tag">ABS — капризный, пахнет</span>
+            </div>
+            <p class="content-text"><strong style="color: var(--text)">PLA</strong> — экологичный, не пахнет, простой в печати. Идеален для первых шагов. Продаётся на любом маркетплейсе: <strong style="color: var(--text)">Ozon</strong> / <strong style="color: var(--text)">Wildberries</strong>.</p>
+          </div>
+          <div class="content-block">
+            <div class="content-label">Проверенные бренды</div>
+            <div class="tag-list">
+              <span class="tag">BestFilament</span>
+              <span class="tag">FDPlast</span>
+              <span class="tag">REC</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step" id="step4">
+        <div class="step-header" onclick="toggleStep(this)">
+          <span class="step-num">Этап 04</span>
+          <div class="step-title-wrap">
+            <div class="step-title"><span class="step-icon">💻</span> Программное обеспечение</div>
+            <div class="step-tagline">Слайсер нарежет модель на слои и создаст G-code.</div>
+          </div>
+          <svg class="step-chevron" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="step-body">
+          <div class="step-divider"></div>
+          <div class="content-block">
+            <div class="content-label">Рекомендуемый софт</div>
+            <div class="printer-grid">
+              <div class="printer-card alt">
+                <div class="p-badge" style="background: rgba(77,159,255,0.1); color: #7ab8ff; border-color: rgba(77,159,255,0.2);">Популярный</div>
+                <div class="p-name">Ultimaker Cura</div>
+                <div class="p-desc">Самый популярный слайсер. Огромное комьюнити и документация.</div>
+              </div>
+              <div class="printer-card featured">
+                <div class="p-badge">Современный</div>
+                <div class="p-name">OrcaSlicer</div>
+                <div class="p-desc">Самый современный. Отличный для принтеров Bambu Lab.</div>
+              </div>
+            </div>
+          </div>
+          <div class="content-block">
+            <div class="content-label">Обучение</div>
+            <div class="link-list">
+              <a class="link-item" href="https://www.youtube.com/results?search_query=Cura+%D0%B4%D0%BB%D1%8F+%D0%BD%D0%B0%D1%87%D0%B8%D0%BD%D0%B0%D1%8E%D1%89%D0%B8%D1%85" target="_blank">Видео-урок по настройке Cura для начинающих</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="step" id="step5">
+        <div class="step-header" onclick="toggleStep(this)">
+          <span class="step-num">Этап 05</span>
+          <div class="step-title-wrap">
+            <div class="step-title"><span class="step-icon">🎨</span> Где взять 3D-модели?</div>
+            <div class="step-tagline">Миллионы моделей уже созданы — не нужно рисовать самому.</div>
+          </div>
+          <svg class="step-chevron" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="step-body">
+          <div class="step-divider"></div>
+          <div class="resource-grid">
+            <a href="https://www.printables.com" target="_blank" class="resource-card">
+              <div class="r-num">01</div>
+              <div class="r-name">Printables.com</div>
+              <div class="r-desc">Лучший современный склад моделей</div>
+            </a>
+            <a href="https://www.thingiverse.com" target="_blank" class="resource-card">
+              <div class="r-num">02</div>
+              <div class="r-name">Thingiverse.com</div>
+              <div class="r-desc">Самый старый и огромный архив</div>
+            </a>
+            <a href="https://cults3d.com" target="_blank" class="resource-card">
+              <div class="r-num">03</div>
+              <div class="r-name">Cults3D</div>
+              <div class="r-desc">Крутые дизайнерские и платные вещи</div>
+            </a>
+          </div>
+          <div class="benchy-callout">
+            <div class="bc-icon">🚢</div>
+            <div>
+              <div class="bc-title">Ваша первая цель</div>
+              <div class="bc-text">Скачайте классику — <strong>3DBenchy</strong>. Это эталонный тест для любого принтера. Найдите на Printables по запросу «3DBenchy».</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 6 -->
+      <div class="step" id="step6">
+        <div class="step-header" onclick="toggleStep(this)">
+          <span class="step-num">Этап 06</span>
+          <div class="step-title-wrap">
+            <div class="step-title"><span class="step-icon">🏁</span> Первая печать</div>
+            <div class="step-tagline">Пошаговый запуск.</div>
+          </div>
+          <svg class="step-chevron" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="step-body">
+          <div class="step-divider"></div>
+          <ol class="step-list">
+            <li><div><strong style="color: var(--text); display:block; margin-bottom:2px;">Сборка</strong> Соберите принтер строго по инструкции или видео на YouTube под вашу модель.</div></li>
+            <li><div><strong style="color: var(--text); display:block; margin-bottom:2px;">Калибровка стола</strong> Настройте уровень. Это 90% успеха. Ищите инструкцию по калибровке для своего принтера.</div></li>
+            <li><div><strong style="color: var(--text); display:block; margin-bottom:2px;">Заправка</strong> Вставьте пластик в экструдер согласно инструкции принтера.</div></li>
+            <li><div><strong style="color: var(--text); display:block; margin-bottom:2px;">Слайсинг</strong> Откройте корабль Benchy в Cura, выберите профиль своего принтера и нажмите <em>Slice</em>. Сохраните файл на SD-карту.</div></li>
+            <li><div><strong style="color: var(--text); display:block; margin-bottom:2px;">Старт!</strong> Вставьте карту в принтер, выберите файл и нажмите <em>Print</em>. Наблюдайте первый слой.</div></li>
+          </ol>
+        </div>
+      </div>
+
+    </div><!-- /steps -->
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-title">Навигация</div>
+      <ul class="sidebar-nav">
+        <li><a href="#step1" onclick="openStep('step1')"><span class="sn-num">1</span>Теория</a></li>
+        <li><a href="#step2" onclick="openStep('step2')"><span class="sn-num">2</span>Принтер</a></li>
+        <li><a href="#step3" onclick="openStep('step3')"><span class="sn-num">3</span>Пластик</a></li>
+        <li><a href="#step4" onclick="openStep('step4')"><span class="sn-num">4</span>Слайсер</a></li>
+        <li><a href="#step5" onclick="openStep('step5')"><span class="sn-num">5</span>Модели</a></li>
+        <li><a href="#step6" onclick="openStep('step6')"><span class="sn-num">6</span>Печать</a></li>
+      </ul>
+    </aside>
+  </div>
+
+  <!-- COMMUNITY -->
+  <div style="margin-top: 64px; padding-top: 48px; border-top: 1px solid var(--border);">
+    <div class="section-intro" style="border: none; padding: 0; margin-bottom: 24px;">
+      <h2>Сообщества</h2>
+      <p>Если что-то пошло не так — пластик не липнет, принтер стучит:</p>
+    </div>
+    <div class="community-grid">
+      <a href="https://t.me" target="_blank" class="community-card">
+        <div class="c-icon">✈️</div>
+        <div>
+          <div class="c-name">Телеграм-чат</div>
+          <div class="c-desc">3D Печать для новичков</div>
+        </div>
+      </a>
+      <a href="https://3dtoday.ru/forum" target="_blank" class="community-card">
+        <div class="c-icon">💬</div>
+        <div>
+          <div class="c-name">Форум 3DToday</div>
+          <div class="c-desc">Крупнейшее русское комьюнити</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-left">3D START</div>
+  <div class="f-right">Обновлено: Апрель 2026 · Удачи в печати! Первый слой — самый важный.</div>
+</footer>
+
+<script>
+function toggleStep(header) {
+  const step = header.closest('.step');
+  step.classList.toggle('open');
+}
+
+function openStep(id) {
+  const step = document.getElementById(id);
+  if (step && !step.classList.contains('open')) {
+    step.classList.add('open');
+  }
+  setTimeout(() => {
+    step.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
+}
+</script>
+</body>
+</html>
